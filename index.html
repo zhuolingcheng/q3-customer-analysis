@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>2026年Q3效果BU客户数据分析</title>
+<script src="https://cdn.bootcdn.net/ajax/libs/echarts/5.4.3/echarts.min.js"></script>
+<style>
+  :root{
+    --primary:#2563eb; --primary-l:#eff6ff; --ink:#1e293b; --sub:#64748b;
+    --line:#e2e8f0; --bg:#f5f7fa; --card:#ffffff;
+    --up:#dc2626; --down:#16a34a; --warn:#d97706;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:"Microsoft YaHei","PingFang SC",sans-serif;background:var(--bg);color:var(--ink);font-size:14px;}
+  .wrap{max-width:1280px;margin:0 auto;padding:24px 20px 60px;}
+  header.hero{background:linear-gradient(135deg,#1d4ed8,#3b82f6);color:#fff;border-radius:14px;padding:34px 40px;margin-bottom:22px;}
+  header.hero h1{font-size:26px;font-weight:700;letter-spacing:1px;}
+  header.hero p{margin-top:10px;font-size:13px;opacity:.92;line-height:1.8;}
+  .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:26px;}
+  .kpi{background:var(--card);border-radius:12px;padding:18px 20px;box-shadow:0 1px 3px rgba(15,23,42,.06);border-top:3px solid var(--primary);}
+  .kpi .lab{font-size:12px;color:var(--sub);}
+  .kpi .val{font-size:26px;font-weight:700;color:var(--primary);margin-top:6px;font-family:Arial;}
+  .kpi .note{font-size:11px;color:var(--sub);margin-top:4px;}
+  nav.toc{background:var(--card);border-radius:10px;padding:12px 18px;margin-bottom:26px;box-shadow:0 1px 3px rgba(15,23,42,.06);display:flex;gap:24px;font-size:13px;}
+  nav.toc a{color:var(--primary);text-decoration:none;font-weight:600;}
+  section{margin-bottom:36px;}
+  .sec-head{display:flex;align-items:baseline;gap:12px;margin-bottom:14px;}
+  .sec-head .no{background:var(--primary);color:#fff;font-weight:700;border-radius:8px;padding:3px 12px;font-size:15px;}
+  .sec-head h2{font-size:19px;font-weight:700;}
+  .sec-head .en{font-size:12px;color:var(--sub);}
+  .card{background:var(--card);border-radius:12px;padding:20px 22px;box-shadow:0 1px 3px rgba(15,23,42,.06);margin-bottom:16px;}
+  .card h3{font-size:15px;font-weight:700;margin-bottom:4px;}
+  .card .cap{font-size:12px;color:var(--sub);margin-bottom:12px;}
+  .chart{width:100%;height:400px;}
+  .chart.tall{height:430px;}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  @media (max-width:900px){.grid2,.kpis{grid-template-columns:1fr;}}
+  table{width:100%;border-collapse:collapse;font-size:13px;margin-top:6px;}
+  th{background:var(--primary-l);color:#1e40af;font-weight:600;padding:9px 8px;border:1px solid var(--line);white-space:nowrap;}
+  td{padding:8px;border:1px solid var(--line);text-align:center;font-family:Arial,"Microsoft YaHei";}
+  td.l,th.l{text-align:left;font-family:"Microsoft YaHei";}
+  tr:nth-child(even) td{background:#f8fafc;}
+  .num{font-family:Arial;}
+  .concl{background:linear-gradient(135deg,#eff6ff,#f0f9ff);border:1px solid #bfdbfe;border-radius:12px;padding:18px 22px;margin-top:14px;}
+  .concl h4{font-size:14px;color:#1d4ed8;margin-bottom:10px;}
+  .concl ul{list-style:none;}
+  .concl li{position:relative;padding-left:20px;margin-bottom:8px;line-height:1.75;font-size:13px;color:#334155;}
+  .concl li:before{content:"▸";position:absolute;left:2px;color:var(--primary);font-weight:700;}
+  .concl b{color:#1e3a8a;}
+  .tag{display:inline-block;font-size:11px;border-radius:4px;padding:1px 7px;margin-left:6px;vertical-align:middle;}
+  .tag.up{background:#fee2e2;color:#b91c1c;}
+  .tag.down{background:#dcfce7;color:#15803d;}
+  .tag.flat{background:#f1f5f9;color:#475569;}
+  .blk-title{font-size:14px;font-weight:700;color:var(--ink);margin:6px 0 2px;display:flex;align-items:center;gap:8px;}
+  .blk-title .dot{width:8px;height:8px;border-radius:50%;background:var(--primary);}
+  footer{text-align:center;color:var(--sub);font-size:12px;margin-top:30px;line-height:1.8;}
+  .legend-ref{font-size:12px;color:var(--sub);margin-top:6px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="hero">
+  <h1>2026年Q3效果BU客户数据分析</h1>
+  <p>广告信息流代理 · 效果业务（BU）｜覆盖板块：垂直 / 网服 / 大消费 / 平销<br>
+  数据期间：2026年1月–9月（Q3 为7–9月）｜消耗单位：万元（原始数据为元，已统一换算）｜数据来源：《Q3经营分析会-效果业绩数据-20261012》</p>
+</header>
+
+<div class="kpis">
+  <div class="kpi"><div class="lab">Q3 新增商机</div><div class="val" id="k1">–</div><div class="note">四大板块合计（个）</div></div>
+  <div class="kpi"><div class="lab">Q3 新增商机对应消耗</div><div class="val" id="k2">–</div><div class="note">四大板块合计</div></div>
+  <div class="kpi"><div class="lab">新增消耗 / 板块总消耗</div><div class="val" id="k3">–</div><div class="note">四大板块合计口径</div></div>
+  <div class="kpi"><div class="lab">四大板块 Q3 总消耗</div><div class="val" id="k4">–</div><div class="note">四大板块合计</div></div>
+</div>
+
+<nav class="toc">
+  <a href="#s1">① Q3新增客户及消耗</a>
+  <a href="#s2">② Q3存量Top客户消耗趋势</a>
+  <a href="#s3">③ Q3毛利人效分析</a>
+</nav>
+
+<!-- ============ 模块1 ============ -->
+<section id="s1">
+  <div class="sec-head"><span class="no">1</span><h2>Q3 新增客户及消耗</h2><span class="en">新增商机体量 · 占比 · 合作模式结构</span></div>
+  <div class="grid2">
+    <div class="card">
+      <h3>各板块 Q3 新增商机数与对应消耗</h3>
+      <div class="cap">柱（左轴）= 新增商机数（个）；柱（右轴）= 新增商机对应消耗（万元）</div>
+      <div id="c11" class="chart"></div>
+    </div>
+    <div class="card">
+      <h3>新增消耗合作模式构成（代充值 / 代运营 / 纯代）</h3>
+      <div class="cap">堆叠柱 = 消耗（万元）；折线 = 新增消耗占板块Q3总消耗比例（右轴）</div>
+      <div id="c12" class="chart"></div>
+    </div>
+  </div>
+  <div class="card">
+    <h3>模块一明细数据表</h3>
+    <div class="cap">金额单位：万元；占比 = 新增商机消耗 / 该板块 Q3 总消耗；模式占比 = 各模式 / 新增消耗</div>
+    <div style="overflow-x:auto;">
+    <table id="t1">
+      <thead><tr>
+        <th class="l">业务板块</th><th>新增商机(个)</th><th>新增消耗</th><th>板块Q3总消耗</th><th>新增消耗占比</th>
+        <th>代充值</th><th>占比</th><th>代运营</th><th>占比</th><th>纯代</th><th>占比</th><th>单商机均耗</th>
+      </tr></thead>
+      <tbody></tbody>
+    </table>
+    </div>
+  </div>
+  <div class="concl">
+    <h4>▍模块一分析结论</h4>
+    <ul>
+      <li><b>整体盘面：存量为主，新增为辅。</b>Q3 四大板块合计新增商机 <b>499 个</b>、对应消耗 <b>3.56 亿元</b>，仅占四大板块 Q3 总消耗（<b>70.70 亿元</b>）的 <b>5.0%</b>，九成五以上消耗仍由存量客户贡献。</li>
+      <li><b>大消费是"新增引擎"。</b>新增消耗 <b>1.76 亿元</b>，占本板块 Q3 总消耗的 <b>39.8%</b>——即大消费近四成消耗来自新客；单商机平均消耗 <b>132 万元/个</b>，商机质量仅次于网服，"上量+上质"双优。</li>
+      <li><b>垂直、网服高度依赖存量。</b>新增消耗占板块总消耗仅 <b>2.5%</b> 和 <b>1.4%</b>，基本盘在头部存量客户。其中网服新增仅 19 个但单商机均耗高达 <b>199 万元/个</b>，走"少而精"路线。</li>
+      <li><b>合作模式结构差异显著：</b>网服新增以<b>纯代</b>绝对主导（81.5%）；大消费"纯代+代充值"双轮（57.9% + 36.0%）；垂直以<b>代充值</b>为主（64.9%）；<b>平销新增 100% 为代充值</b>（1.09 亿元）。</li>
+      <li><b>平销"多而不精"：</b>新增商机 229 个数量最多，但单商机均耗仅 <b>48 万元/个</b>，与模块二观察到的"客户生命周期短"特征互为印证。</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ============ 模块2 ============ -->
+<section id="s2">
+  <div class="sec-head"><span class="no">2</span><h2>Q3 存量 Top 客户消耗变化趋势</h2><span class="en">各板块年度 Top10 客户 · 1–9月月度消耗趋势</span></div>
+  <div class="card">
+    <h3>板块 Top10 合计月度消耗对比（万元）</h3>
+    <div class="cap">四大板块 Top10 客户合计消耗走势，用于先看板块整体方向</div>
+    <div id="c20" class="chart"></div>
+  </div>
+  <div class="card">
+    <div class="blk-title"><span class="dot"></span>垂直板块 · Top10 客户月度消耗趋势（万元）</div>
+    <div class="cap">游戏客户为主</div>
+    <div id="c21" class="chart tall"></div>
+    <div id="tbl21" class="top10-table"></div>
+    <div class="concl"><h4>垂直板块结论</h4><ul>
+      <li>Top10 合计 1月 1.93 亿 → 2月冲高 <b>2.86 亿</b> → 9月 <b>1.49 亿</b>，<b>趋势整体下行</b>（9月较1月 -23%）。</li>
+      <li><b>点点互动</b> 2月单月冲至 1.12 亿后连续 7 个月回落，9月仅 908 万；贪玩、巨人、雷霆等传统游戏客户自 Q2 起普遍收缩。</li>
+      <li><b>济采采购</b>下半年逆势回升（9月 3613 万，接近年内高点），是板块内少有的上行客户。结论：游戏大盘降温、头部预算收缩，需加快培育新增长点。</li>
+    </ul></div>
+  </div>
+  <div class="card">
+    <div class="blk-title"><span class="dot"></span>网服板块 · Top10 客户月度消耗趋势（万元）</div>
+    <div class="cap">保险/互联网客户为主</div>
+    <div id="c22" class="chart tall"></div>
+    <div id="tbl22" class="top10-table"></div>
+    <div class="concl"><h4>网服板块结论</h4><ul>
+      <li><b>有竹居一家独大</b>：累计消耗 31.46 亿，占 Top10 合计（54.29 亿）的 <b>58%</b>；1月 4.14 亿冲高后逐月回落，9月 2.14 亿<b>几近腰斩</b>，直接拖累板块 Top10 合计从 6.16 亿降至 4.32 亿。</li>
+      <li>保险类客户（元保、微民、海客、众安）Q3 普遍走弱，元保 9月消耗仅为 4月的 30%。</li>
+      <li>亮点：<b>蚂蚁未来</b> 4月起从零爬坡、稳步放量（9月 1048 万）；淘宝、三快全年平稳。结论：对有竹居依赖度过高，需加速培育第二增长曲线。</li>
+    </ul></div>
+  </div>
+  <div class="card">
+    <div class="blk-title"><span class="dot"></span>大消费板块 · Top10 客户月度消耗趋势（万元）</div>
+    <div class="cap">消费品牌为主</div>
+    <div id="c23" class="chart tall"></div>
+    <div id="tbl23" class="top10-table"></div>
+    <div class="concl"><h4>大消费板块结论</h4><ul>
+      <li><b>四大板块中唯一趋势显著上行的板块</b>：Top10 合计从 1月 0.26 亿升至 9月 <b>0.87 亿（3.3 倍）</b>，7月起明显加速。</li>
+      <li><b>阿里妈妈</b> 7月首次起量后快速攀升（9月 4733 万，占 Top10 合计过半）；<b>联合利华</b> 7月起量（9月 692 万）；三生蔓迪、屠夫鸟等存量客户稳中有升。</li>
+      <li>结论：大消费处于快速放量期，"存量爬坡 + 新客涌入"双驱动，与模块一"新增消耗占比 39.8%"相互印证，是 Q3 最值得加大投入的板块。</li>
+    </ul></div>
+  </div>
+  <div class="card">
+    <div class="blk-title"><span class="dot"></span>平销板块 · Top10 客户月度消耗趋势（万元）</div>
+    <div class="cap">电商/快消客户为主</div>
+    <div id="c24" class="chart tall"></div>
+    <div id="tbl24" class="top10-table"></div>
+    <div class="concl"><h4>平销板块结论</h4><ul>
+      <li>Top10 合计自 6月起持续放量，9月达 <b>4.88 亿创年内新高</b>（为 1月 1.56 亿的 3.1 倍），板块冲量能力最强。</li>
+      <li>但<b>客户波动极大</b>：可逐生物 9月骤降至 1622 万（8月 1.22 亿，环比 -87%）；足鼎信息从 1月 5501 万滑落至 9月几乎归零；海航时代 9月爆发 1.60 亿。</li>
+      <li>结论：平销呈现"爆量快、退坡也快"的客户结构，需持续补充新客（与模块一 229 个新增商机对应），并重点防范头部客户断档风险。</li>
+    </ul></div>
+  </div>
+</section>
+
+<!-- ============ 模块3 ============ -->
+<section id="s3">
+  <div class="sec-head"><span class="no">3</span><h2>Q3 毛利人效分析</h2><span class="en">各事业部 1–9月考核毛利人效 · 双参考线对比</span></div>
+  <div class="card">
+    <h3>效果 BU 整体 · 各板块合计毛利人效走势（元/人）</h3>
+    <div class="cap">先看大盘：四大板块合计人效 vs 效果整体人效</div>
+    <div id="c30" class="chart"></div>
+  </div>
+  <div class="card">
+    <div class="blk-title"><span class="dot"></span>垂直板块 · 各事业部毛利人效（元/人）</div>
+    <div class="cap">含第一/第二/第七事业部、游戏商务部；<b style="color:#475569">深灰虚线 = 板块合计人效</b>，<b style="color:#dc2626">红色虚线 = 效果整体人效</b></div>
+    <div id="c31" class="chart tall"></div>
+  </div>
+  <div class="card">
+    <div class="blk-title"><span class="dot"></span>网服板块 · 各事业部毛利人效（元/人）</div>
+    <div class="cap">含第三/第五/第六/第八事业部、网服商务部；参考线同上</div>
+    <div id="c32" class="chart tall"></div>
+  </div>
+  <div class="card">
+    <div class="blk-title"><span class="dot"></span>大消费板块 · 各事业部毛利人效（元/人）</div>
+    <div class="cap">含第九/第十/第二十一/第二十三事业部；参考线同上</div>
+    <div id="c33" class="chart tall"></div>
+  </div>
+  <div class="card">
+    <div class="blk-title"><span class="dot"></span>平销板块 · 各事业部毛利人效（元/人）</div>
+    <div class="cap">含平台直销一部/二部；参考线同上</div>
+    <div id="c34" class="chart tall"></div>
+  </div>
+  <div class="concl">
+    <h4>▍模块三分析结论</h4>
+    <ul>
+      <li><b>两个"精英商务部"领跑：</b>游戏商务部（1.27–2.97 万/人）与网服商务部（1.88–3.72 万/人）月度人效长期大幅高于各事业部（普遍 0.5–4 万/人）及效果整体水平，人均创利能力是事业部体系的约 10 倍量级，是组织效率标杆。</li>
+      <li><b>平销平台直销一部是唯一全年负人效部门且持续恶化</b>（1月 -3.8 万/人 → 9月 <b>-11.5 万/人</b>），拖累平销板块合计人效全年为负（9月 -6.3 万/人）。虽然平销消耗体量冲高（模块二 9月 4.88 亿），但"有量无利"，需专项复盘返点政策与成本结构。</li>
+      <li><b>大消费人效稳步上行：</b>板块合计从 1月 1.72 万/人升至 9月 <b>2.23 万/人</b>，Q3 持续站上效果整体线；第十事业部（9月 3.26 万/人）、第二十一事业部（2.79 万/人）向上明显——消耗与人效"量利双升"，成长质量最高。</li>
+      <li><b>网服 Q3 人效走弱：</b>板块合计从 6月 2.77 万/人回落至 9月 <b>0.99 万/人</b>，跌破效果整体线；第六事业部 9月仅 0.55 万/人、环比大幅下滑。叠加头部客户有竹居消耗回落，"消耗与人效双降"，需重点关注。</li>
+      <li><b>垂直整体弱于大盘：</b>板块合计 9月 1.47 万/人低于效果整体 0.89 万线附近水平的时间较少，Q3 各月基本贴着或低于整体线运行，与游戏大盘降温一致。</li>
+      <li><b>整体形态："6月冲高、Q3回落"。</b>效果整体人效 6月冲至 3.36 万/人（半年节点）后连续三个月回落，9月仅 <b>0.89 万/人</b>，为年内最低，Q3 整体弱于 Q1。</li>
+      <li><b>Top10 集中度与人效走势高度关联：</b>网服 Top10 占板块 1-9 月总消耗高达 <b>91.7%</b>、Top1 有竹居占 <b>53.2%</b>，9月人效随头部客户回落而快速跌破整体线；大消费 Top10 占比仅 <b>43.3%</b>、Top3 不足三成，低集中度支撑"量利双升"；平销 Top10 占比 <b>43.9%</b> 但客户生命周期短，消耗冲高而人效为负，"有量无利"是结构性现象。</li>
+    </ul>
+  </div>
+</section>
+
+<footer>
+  2026年Q3效果BU客户数据分析｜生成日期：2026-10-13<br>
+  数据来源：Q3经营分析会-效果业绩数据-20261012(1).xlsx（消耗单位已由元换算为万元；毛利人效单位为元/人）
+</footer>
+</div>
+
+<script>
+const D = {"m1": [{"name": "垂直", "cnt": 118, "cost": 3346.89, "ratio": 0.0254, "dcz": 2172.3, "dyy": 1145.61, "cdd": 28.98, "total": 131779.27, "dcz_p": 0.6490503123795525, "dyy_p": 0.34229090289791414, "cdd_p": 0.008658784722533458, "avg": 28.363474576271184}, {"name": "网服", "cnt": 19, "cost": 3785.71, "ratio": 0.0142, "dcz": 19.0, "dyy": 681.85, "cdd": 3084.87, "total": 266955.07, "dcz_p": 0.005018873606272007, "dyy_p": 0.1801115246545562, "cdd_p": 0.8148722432515961, "avg": 199.2478947368421}, {"name": "大消费", "cnt": 133, "cost": 17568.78, "ratio": 0.3982, "dcz": 6317.76, "dyy": 1076.83, "cdd": 10174.19, "total": 44120.13, "dcz_p": 0.35960152042429816, "dyy_p": 0.06129224681508904, "cdd_p": 0.5791062327606129, "avg": 132.0960902255639}, {"name": "平销", "cnt": 229, "cost": 10928.9, "ratio": 0.0414, "dcz": 10928.9, "dyy": 0.0, "cdd": 0.0, "total": 264135.21, "dcz_p": 1.0, "dyy_p": 0.0, "cdd_p": 0.0, "avg": 47.724454148471615}], "m2": {"垂直": {"custs": [{"rank": 1, "name": "点点互动（北京）科技有限公司", "total": 31418.0, "months": [3271.3, 11214.1, 7316.6, 2840.3, 1535.7, 1401.1, 1446.1, 1484.5, 908.3]}, {"rank": 2, "name": "江西贪玩信息技术有限公司", "total": 28228.1, "months": [3319.6, 5322.0, 4430.6, 4121.3, 3136.5, 2655.6, 2146.0, 1670.3, 1426.2]}, {"rank": 3, "name": "杭州济采采购有限公司", "total": 24217.9, "months": [2850.9, 1554.4, 1935.6, 1365.8, 2051.8, 3880.0, 3179.5, 3786.8, 3613.1]}, {"rank": 4, "name": "腾讯科技（深圳）有限公司", "total": 22310.3, "months": [3103.2, 3488.1, 3208.9, 3122.6, 2014.8, 2031.3, 1621.5, 2341.7, 1378.2]}, {"rank": 5, "name": "上海巨人统平网络科技有限公司", "total": 20024.9, "months": [2872.5, 3459.2, 2309.7, 1726.6, 2182.7, 2062.0, 2402.4, 1465.1, 1544.6]}, {"rank": 6, "name": "网易（杭州）网络有限公司", "total": 11871.0, "months": [939.0, 796.3, 761.1, 748.1, 1380.9, 2110.3, 1897.6, 1598.4, 1639.4]}, {"rank": 7, "name": "深圳市望尘莫及科技有限公司", "total": 10658.2, "months": [361.5, 331.4, 389.1, 743.1, 996.7, 1411.2, 3347.0, 2157.9, 920.3]}, {"rank": 8, "name": "深圳市必凡娱乐科技有限公司", "total": 9457.9, "months": [44.7, null, 23.5, 400.5, 1277.9, 1727.0, 1802.8, 2408.7, 1772.8]}, {"rank": 9, "name": "深圳雷霆信息技术有限公司", "total": 9343.2, "months": [1564.8, 1394.8, 1239.7, 1357.5, 770.2, 501.3, 933.5, 809.1, 772.3]}, {"rank": 10, "name": "深圳市探娱互动科学文化有限公司", "total": 7460.9, "months": [976.1, 1083.3, 966.6, 659.8, 629.6, 652.1, 526.4, 1031.9, 935.1]}], "sum": [19303.4, 28643.7, 22581.3, 17085.6, 15976.9, 18431.9, 19302.7, 18754.6, 14910.2]}, "网服": {"custs": [{"rank": 1, "name": "北京有竹居网络技术有限公司", "total": 314640.9, "months": [41447.7, 51438.1, 41555.4, 37263.6, 36419.7, 30285.3, 30807.0, 24061.8, 21362.4]}, {"rank": 2, "name": "淘宝（中国）软件有限公司", "total": 70945.2, "months": [6324.8, 3883.4, 9337.8, 6614.5, 11503.6, 14562.8, 5604.2, 5860.8, 7253.4]}, {"rank": 3, "name": "北京三快在线科技有限公司", "total": 47556.2, "months": [3697.0, 3417.3, 4287.2, 5205.1, 6491.2, 6685.1, 6800.5, 6360.4, 4612.5]}, {"rank": 4, "name": "元保保险经纪（北京）有限公司", "total": 43308.7, "months": [4488.2, 4063.4, 3510.1, 7788.5, 6786.2, 6244.2, 5899.6, 2204.1, 2324.4]}, {"rank": 5, "name": "薯鸿文化传媒（上海）有限公司", "total": 16772.5, "months": [1438.0, 160.7, 1915.7, 2672.9, 2434.7, 3550.4, 2403.9, 1342.9, 853.3]}, {"rank": 6, "name": "微民保险代理有限公司", "total": 14217.3, "months": [976.5, 1133.4, 1557.4, 1110.2, 1119.4, 1017.3, 2936.4, 2373.8, 1993.0]}, {"rank": 7, "name": "海客（天津）保险经纪有限公司", "total": 10956.6, "months": [139.3, 1093.3, 804.8, 1304.1, 1637.3, 991.6, 1038.1, 2096.5, 1851.7]}, {"rank": 8, "name": "北京嘀嘀无限科技发展有限公司", "total": 10612.1, "months": [1505.2, 1186.8, 1207.8, 1096.3, 1060.1, 992.8, 1182.6, 1074.4, 1305.9]}, {"rank": 9, "name": "众安在线财产保险股份有限公司", "total": 8983.6, "months": [1588.0, 1948.3, 1666.4, 827.6, 698.2, 454.1, 739.8, 466.0, 595.1]}, {"rank": 10, "name": "杭州蚂蚁未来科技有限公司", "total": 4875.6, "months": [0.0, 0.0, 0.0, 41.2, 933.8, 822.2, 1062.7, 967.8, 1047.9]}], "sum": [61604.7, 68324.7, 65842.4, 63924.0, 69084.1, 65605.7, 58474.7, 46808.6, 43199.6]}, "大消费": {"custs": [{"rank": 1, "name": "杭州阿里妈妈软件服务有限公司", "total": 9988.8, "months": [null, null, null, null, null, null, 1349.6, 3906.5, 4732.7]}, {"rank": 2, "name": "浙江三生蔓迪药业有限公司", "total": 7175.7, "months": [434.4, 395.7, 824.7, 773.0, 1036.1, 1001.6, 895.9, 914.9, 899.4]}, {"rank": 3, "name": "天长市舒客电子商务有限公司", "total": 5283.1, "months": [1268.5, 907.4, 1471.1, 576.5, 338.8, 399.5, 317.7, 3.6, 0.0]}, {"rank": 4, "name": "东莞市屠夫鸟文化传媒有限公司", "total": 3143.6, "months": [33.8, 7.8, 177.6, 340.9, 472.2, 453.6, 651.1, 443.7, 562.8]}, {"rank": 5, "name": "广州麦优网络科技有限公司", "total": 3063.6, "months": [219.1, 299.5, 261.4, 126.4, 395.4, 491.7, 236.9, 447.6, 585.5]}, {"rank": 6, "name": "联合利华服务（合肥）有限公司", "total": 2215.4, "months": [null, null, null, null, null, null, 500.3, 1023.5, 691.5]}, {"rank": 7, "name": "美赞臣营养品（中国）有限公司", "total": 1799.1, "months": [203.0, 80.2, 17.4, 105.2, 155.8, 207.6, 204.7, 260.4, 564.7]}, {"rank": 8, "name": "陕西蓝装丝路会展有限公司", "total": 1790.1, "months": [null, null, 228.1, 224.3, 335.1, 245.6, 192.0, 306.8, 258.1]}, {"rank": 9, "name": "广州顺洲国际进出口有限公司", "total": 1693.8, "months": [310.3, 201.1, 408.6, 179.4, 148.7, 67.3, 62.8, 96.5, 219.2]}, {"rank": 10, "name": "长沙市到家悠享家政服务有限公司", "total": 1663.9, "months": [150.7, 60.3, 194.9, 210.0, 210.7, 203.0, 216.0, 215.2, 203.2]}], "sum": [2619.9, 1952.0, 3583.8, 2535.6, 3092.9, 3070.0, 4627.0, 7618.8, 8717.2]}, "平销": {"custs": [{"rank": 1, "name": "厦门可逐生物科技有限公司", "total": 56300.3, "months": [2985.4, 5524.0, 7115.2, 127.8, 5696.2, 10720.7, 10345.8, 12163.4, 1621.8]}, {"rank": 2, "name": "厦门海航时代运营管理有限公司", "total": 32886.8, "months": [1073.0, 417.0, 667.9, 2.3, 3330.5, 554.3, 4396.7, 6444.8, 16000.2]}, {"rank": 3, "name": "上海格芒生物科技有限公司", "total": 26465.6, "months": [1501.9, 1226.9, 1773.6, 1448.4, 2109.9, 2439.6, 2960.6, 4736.0, 8268.8]}, {"rank": 4, "name": "福州纯叁叁电子商务有限公司", "total": 24123.9, "months": [72.8, 15.6, 36.6, 56.3, 63.9, 1428.1, 6437.5, 6577.1, 9436.1]}, {"rank": 5, "name": "深圳方程式控股有限公司", "total": 21436.5, "months": [2126.5, 46.8, 629.1, 426.9, 6725.8, 175.1, 5652.5, 196.3, 5457.6]}, {"rank": 6, "name": "对面（厦门）品牌推广有限公司", "total": 16665.6, "months": [1606.1, 37.0, 288.4, 2486.7, 4522.0, 3540.5, 2514.4, 1132.5, 538.0]}, {"rank": 7, "name": "广州妙卓科技有限公司", "total": 14835.8, "months": [null, null, 3448.8, 3149.3, 1101.4, 4637.1, 880.5, 905.5, 713.2]}, {"rank": 8, "name": "重庆麦芽传媒有限公司", "total": 14735.9, "months": [313.3, 684.6, 759.5, 473.9, 1067.6, 1356.0, 976.5, 4470.9, 4633.7]}, {"rank": 9, "name": "广州溯光互联科技有限公司", "total": 14599.4, "months": [386.9, 1028.0, 2250.5, 1632.0, 2482.5, 962.6, 1387.5, 2350.0, 2119.5]}, {"rank": 10, "name": "厦门足鼎信息科技有限公司", "total": 12167.2, "months": [5501.3, 2323.6, 2888.8, 893.1, 505.2, 35.1, 11.2, 6.1, 2.8]}], "sum": [15567.2, 11303.6, 19858.3, 10696.6, 27605.0, 25849.1, 35563.3, 38982.5, 48791.6]}}, "m3": {"垂直": {"depts": [{"name": "第二事业部", "vals": [23021.0, 26651.0, 23265.0, 17589.0, 22058.0, 30857.0, 16069.0, 14562.0, 13966.0]}, {"name": "第七事业部", "vals": [18738.0, 13760.0, 15417.0, 8063.0, 10126.0, 48994.0, 18393.0, 14956.0, 13008.0]}, {"name": "游戏商务部", "vals": [148932.0, 163800.0, 141898.0, 126901.0, 121832.0, 297402.0, 180378.0, 187007.0, 156073.0]}], "block": [25966.0, 25752.0, 25464.0, 16641.0, 18601.0, 56682.0, 18770.0, 17998.0, 14663.0]}, "网服": {"depts": [{"name": "第五事业部", "vals": [15095.0, 10885.0, 13450.0, 14959.0, 15256.0, 64515.0, 23405.0, 16249.0, 18719.0]}, {"name": "第六事业部", "vals": [20792.0, 20218.0, 15947.0, 12892.0, 12734.0, 18821.0, 16151.0, 11537.0, 5518.0]}, {"name": "第八事业部", "vals": [13697.0, 18396.0, 12840.0, 9643.0, 10280.0, 15663.0, 12153.0, 9233.0, 7971.0]}, {"name": "网服商务部", "vals": [221340.0, 202324.0, 189829.0, 188130.0, 371537.0, 277073.0, 215536.0, 204761.0, 196777.0]}], "block": [15607.0, 14682.0, 15318.0, 10632.0, 12540.0, 27714.0, 13722.0, 11707.0, 9857.0]}, "大消费": {"depts": [{"name": "第十事业部", "vals": [12048.0, 9797.0, 10849.0, 10473.0, 12960.0, 9623.0, 16238.0, 29790.0, 32558.0]}, {"name": "第二十一事业部", "vals": [28223.0, 15415.0, 36468.0, 27336.0, 30391.0, 30510.0, 39860.0, 32663.0, 27921.0]}, {"name": "第二十三事业部", "vals": [11898.0, 8200.0, 13627.0, 6260.0, 13969.0, 12853.0, 9485.0, 20429.0, 19343.0]}], "block": [17181.0, 13179.0, 21584.0, 15997.0, 20361.0, 17923.0, 19531.0, 22589.0, 22308.0]}, "平销": {"depts": [{"name": "平台直销二部", "vals": [17730.0, 21475.0, 29862.0, 20548.0, 16488.0, 34336.0, 12263.0, 14262.0, 10234.0]}, {"name": null, "vals": [16072.0, 15905.0, 16076.0, 10917.0, 13176.0, 33648.0, 13088.0, 12022.0, 8901.0]}], "block": [-12914.0, -3256.0, -25530.0, -19899.0, 1400.0, -3101.0, -31205.0, -30597.0, -62729.0]}}, "overall3": [16072.0, 15905.0, 16076.0, 10917.0, 13176.0, 33648.0, 13088.0, 12022.0, 8901.0], "months": ["1月", "2月", "3月", "4月", "5月", "6月", "7月", "8月", "9月"], "kpi": {"tot_cnt": 499, "tot_new": 35630.0, "tot_all": 706990.0, "tot_ratio": 0.05039717128544224}, "block_totals": {"垂直": 3806308776, "网服": 5919564825, "大消费": 873738730, "平销": 5331273269}};
+const MONTHS = D.months;
+const PALETTE = ['#2563eb','#7c3aed','#0891b2','#16a34a','#d97706','#dc2626','#db2777','#0d9488','#6366f1','#ca8a04'];
+const fmtW = v => v==null ? '-' : (v>=10000 ? (v/10000).toFixed(2)+'亿' : v.toLocaleString('zh',{maximumFractionDigits:0})+'万');
+const fmtY = v => v==null ? '-' : v.toLocaleString('zh',{maximumFractionDigits:0});
+
+// ---- KPI ----
+document.getElementById('k1').textContent = D.kpi.tot_cnt;
+document.getElementById('k2').textContent = (D.kpi.tot_new/10000).toFixed(2)+' 亿';
+document.getElementById('k3').textContent = (D.kpi.tot_ratio*100).toFixed(1)+' %';
+document.getElementById('k4').textContent = (D.kpi.tot_all/10000).toFixed(2)+' 亿';
+
+const mk = (id, opt) => { const el=document.getElementById(id); if(!el) return; const c=echarts.init(el); c.setOption(opt); return c; };
+window.addEventListener('resize', ()=>charts.forEach(c=>c&&c.resize()));
+const charts=[];
+
+// ---- M1 图1：新增商机数 + 消耗 ----
+const names1 = D.m1.map(d=>d.name);
+charts.push(mk('c11', {
+  tooltip:{trigger:'axis'}, legend:{top:0},
+  grid:{left:60,right:70,top:40,bottom:30},
+  xAxis:{type:'category',data:names1},
+  yAxis:[{type:'value',name:'商机数(个)',splitLine:{show:false}},{type:'value',name:'消耗',splitLine:{show:false},axisLabel:{formatter:v=>v>=10000?(v/10000)+'亿':v}}],
+  series:[
+    {name:'Q3新增商机数(个)',type:'bar',barWidth:40,data:D.m1.map(d=>d.cnt),
+     itemStyle:{color:'#93c5fd',borderRadius:[5,5,0,0]},label:{show:true,position:'top',fontWeight:'bold'}},
+    {name:'新增消耗(万元)',type:'line',yAxisIndex:1,data:D.m1.map(d=>d.cost),symbol:'circle',symbolSize:9,
+     lineStyle:{width:3,color:'#2563eb'},itemStyle:{color:'#2563eb'},label:{show:true,position:'top',formatter:p=>fmtW(p.value),color:'#1e3a8a',fontWeight:'bold'}}
+  ]
+}));
+
+// ---- M1 图2：模式构成堆叠 + 占比线 ----
+charts.push(mk('c12', {
+  tooltip:{trigger:'axis',axisPointer:{type:'shadow'}}, legend:{top:0},
+  grid:{left:70,right:70,top:40,bottom:30},
+  xAxis:{type:'category',data:names1},
+  yAxis:[{type:'value',name:'消耗',splitLine:{show:false}},{type:'value',name:'占比',splitLine:{show:false},axisLabel:{formatter:'{value}%'},max:50}],
+  series:[
+    {name:'代充值',type:'bar',stack:'m',barWidth:44,data:D.m1.map(d=>d.dcz),itemStyle:{color:'#2563eb'}},
+    {name:'代运营',type:'bar',stack:'m',barWidth:44,data:D.m1.map(d=>d.dyy),itemStyle:{color:'#60a5fa'}},
+    {name:'纯代',type:'bar',stack:'m',barWidth:44,data:D.m1.map(d=>d.cdd),itemStyle:{color:'#a5b4fc',borderRadius:[4,4,0,0]}},
+    {name:'新增消耗占板块总消耗',type:'line',yAxisIndex:1,data:D.m1.map(d=>(d.ratio*100).toFixed(2)),
+     itemStyle:{color:'#d97706'},lineStyle:{width:3,color:'#d97706'},symbol:'circle',symbolSize:9,
+     label:{show:true,formatter:'{c}%',color:'#92400e',fontWeight:'bold'}}
+  ]
+}));
+
+// ---- M1 表格 ----
+(function(){
+  const tb=document.querySelector('#t1 tbody');
+  D.m1.forEach(d=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td class="l"><b>${d.name}</b></td><td>${d.cnt}</td><td>${d.cost.toLocaleString('zh',{maximumFractionDigits:0})}</td>
+      <td>${d.total.toLocaleString('zh',{maximumFractionDigits:0})}</td><td><b style="color:#dc2626">${(d.ratio*100).toFixed(2)}%</b></td>
+      <td>${d.dcz.toLocaleString('zh',{maximumFractionDigits:0})}</td><td>${(d.dcz_p*100).toFixed(1)}%</td>
+      <td>${d.dyy.toLocaleString('zh',{maximumFractionDigits:0})}</td><td>${(d.dyy_p*100).toFixed(1)}%</td>
+      <td>${d.cdd.toLocaleString('zh',{maximumFractionDigits:0})}</td><td>${(d.cdd_p*100).toFixed(1)}%</td>
+      <td>${d.avg.toFixed(0)}</td>`;
+    tb.appendChild(tr);
+  });
+  const tr=document.createElement('tr');
+  const sum=(k)=>D.m1.reduce((a,b)=>a+b[k],0);
+  tr.style.background='#eff6ff';tr.style.fontWeight='700';
+  tr.innerHTML=`<td class="l">合计</td><td>${sum('cnt')}</td><td>${sum('cost').toLocaleString('zh',{maximumFractionDigits:0})}</td>
+    <td>${sum('total').toLocaleString('zh',{maximumFractionDigits:0})}</td><td style="color:#dc2626">${(D.kpi.tot_ratio*100).toFixed(2)}%</td>
+    <td>${sum('dcz').toLocaleString('zh',{maximumFractionDigits:0})}</td><td>${(sum('dcz')/sum('cost')*100).toFixed(1)}%</td>
+    <td>${sum('dyy').toLocaleString('zh',{maximumFractionDigits:0})}</td><td>${(sum('dyy')/sum('cost')*100).toFixed(1)}%</td>
+    <td>${sum('cdd').toLocaleString('zh',{maximumFractionDigits:0})}</td><td>${(sum('cdd')/sum('cost')*100).toFixed(1)}%</td>
+    <td>${(sum('cost')/sum('cnt')).toFixed(0)}</td>`;
+  tb.appendChild(tr);
+})();
+
+// ---- M2：Top10合计对比图 ----
+const blockNames=['垂直','网服','大消费','平销'];
+charts.push(mk('c20', {
+  tooltip:{trigger:'axis',valueFormatter:v=>v==null?'-':v.toLocaleString('zh',{maximumFractionDigits:0})},
+  legend:{top:0}, grid:{left:80,right:30,top:56,bottom:30},
+  xAxis:{type:'category',data:MONTHS},
+  yAxis:{type:'value',name:'消耗',splitLine:{show:false},axisLabel:{formatter:v=>v>=10000?(v/10000)+'亿':v}},
+  series:blockNames.map((b,i)=>({name:b,type:'line',data:D.m2[b].sum,symbol:'circle',symbolSize:7,
+    lineStyle:{width:3},itemStyle:{color:PALETTE[i]},
+    label:{show:true,position:'top',formatter:p=>p.value==null?'':p.value.toLocaleString('zh',{maximumFractionDigits:0}),fontSize:9,color:'inherit'},labelLayout:{hideOverlap:true}}))
+}));
+
+// ---- M2：各板块趋势图 ----
+blockNames.forEach((b,bi)=>{
+  const series=D.m2[b].custs.map((c,i)=>({
+    name:`${c.rank}. ${c.name.length>12?c.name.slice(0,12)+'…':c.name}`,
+    type:'line',data:c.months,connectNulls:true,symbol:'circle',symbolSize:5,
+    lineStyle:{width:2},itemStyle:{color:PALETTE[i]},emphasis:{focus:'series'},
+    label:{show:true,position:'top',formatter:p=>p.value==null?'':p.value.toLocaleString('zh',{maximumFractionDigits:0}),fontSize:9,color:'inherit'},labelLayout:{hideOverlap:true}
+  }));
+  charts.push(mk('c2'+(bi+1), {
+    tooltip:{trigger:'axis',valueFormatter:v=>v==null?'-':v.toLocaleString('zh',{maximumFractionDigits:0})},
+    legend:{type:'scroll',top:0,textStyle:{fontSize:11}},
+    grid:{left:80,right:30,top:60,bottom:30},
+    xAxis:{type:'category',data:MONTHS},
+    yAxis:{type:'value',name:'消耗',splitLine:{show:false},axisLabel:{formatter:v=>v>=10000?(v/10000)+'亿':v}},
+    series:series
+  }));
+});
+
+// ---- 填充各板块 Top10 客户明细表 + 集中度结论 ----
+(function(){
+  const fmtN = v => v==null ? '-' : v.toLocaleString('zh',{maximumFractionDigits:0});
+  const topConcl = {
+    '垂直':'Top3 均为游戏客户，板块景气度与游戏行业周期高度绑定。',
+    '网服':'Top10 占比超九成，头部客户波动直接决定板块人效走势，集中度风险需持续关注。',
+    '大消费':'Top3 贡献不足三成，长尾客户与新增客户共同驱动，结构最分散、最健康。',
+    '平销':'集中度中等但客户生命周期短，呈现"高冲量、短合作"的爆款模式。'
+  };
+  blockNames.forEach((b,bi)=>{
+    const total = D.block_totals[b] / 10000;
+    const custs = D.m2[b].custs;
+    const rows = custs.map(c => {
+      const r = c.total / total;
+      return `<tr><td>${c.rank}</td><td class="l">${c.name}</td><td class="num">${fmtN(c.total)}</td><td class="num">${(r*100).toFixed(1)}%</td></tr>`;
+    });
+    const sum = custs.reduce((a,c)=>a+c.total,0);
+    const top10r = sum/total*100;
+    const top3r = custs.slice(0,3).reduce((a,c)=>a+c.total,0)/total*100;
+    const top1r = custs[0].total/total*100;
+    rows.push(`<tr style="background:#eff6ff;font-weight:600;"><td>合计</td><td class="l">Top10 合计</td><td class="num">${fmtN(sum)}</td><td class="num">${top10r.toFixed(1)}%</td></tr>`);
+    const html = `<table><thead><tr><th>排名</th><th class="l">客户名称</th><th>1-9月合计消耗</th><th>占板块1-9月总消耗</th></tr></thead><tbody>${rows.join('')}</tbody></table>`;
+    const el = document.getElementById('tbl2'+(bi+1));
+    if(el) el.innerHTML = html;
+    // 在结论 ul 末尾追加 Top10 集中度分析
+    const card = el && el.parentElement;
+    const conclUl = card && card.querySelector('.concl ul');
+    if(conclUl){
+      const li = document.createElement('li');
+      li.innerHTML = `<b>Top10 客户集中度：</b>Top10 合计占板块 1-9 月总消耗 <b>${top10r.toFixed(1)}%</b>（其中 Top1 ${custs[0].name} 占 <b>${top1r.toFixed(1)}%</b>，Top3 合计占 <b>${top3r.toFixed(1)}%</b>）。${topConcl[b]}`;
+      conclUl.appendChild(li);
+    }
+  });
+})();
+
+// ---- M3：大盘对比图 ----
+charts.push(mk('c30', {
+  tooltip:{trigger:'axis',valueFormatter:v=>v==null?'-':fmtY(v)+' 元/人'},
+  legend:{top:0}, grid:{left:80,right:30,top:40,bottom:30},
+  xAxis:{type:'category',data:MONTHS},
+  yAxis:{type:'value',name:'元/人',axisLabel:{formatter:v=>(v/10000)+'万'}},
+  series:blockNames.map((b,i)=>({name:b+'·板块合计',type:'line',data:D.m3[b].block,symbol:'circle',symbolSize:6,
+    lineStyle:{width:2.5},itemStyle:{color:PALETTE[i]}}))
+    .concat([{name:'效果BU整体',type:'line',data:D.overall3,symbol:'none',
+      lineStyle:{width:3,type:'dashed',color:'#dc2626'},itemStyle:{color:'#dc2626'},z:0}])
+}));
+
+// ---- M3：各板块人效图 ----
+blockNames.forEach((b,bi)=>{
+  const series=D.m3[b].depts.map((d,i)=>({
+    name:d.name,type:'line',data:d.vals,symbol:'circle',symbolSize:6,
+    lineStyle:{width:2},itemStyle:{color:PALETTE[i]},emphasis:{focus:'series'}
+  }));
+  series.push({name:'板块合计(参考线)',type:'line',data:D.m3[b].block,symbol:'none',
+    lineStyle:{width:2.5,type:'dashed',color:'#475569'},itemStyle:{color:'#475569'},z:0});
+  series.push({name:'效果整体(参考线)',type:'line',data:D.overall3,symbol:'none',
+    lineStyle:{width:2.5,type:'dashed',color:'#dc2626'},itemStyle:{color:'#dc2626'},z:0});
+  charts.push(mk('c3'+(bi+1), {
+    tooltip:{trigger:'axis',valueFormatter:v=>v==null?'-':fmtY(v)+' 元/人'},
+    legend:{top:0}, grid:{left:80,right:30,top:56,bottom:30},
+    xAxis:{type:'category',data:MONTHS},
+    yAxis:{type:'value',name:'元/人',axisLabel:{formatter:v=>(v/10000)+'万'}},
+    series:series
+  }));
+});
+</script>
+</body>
+</html>
